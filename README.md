@@ -1,12 +1,25 @@
 # todo-api
 
-A simple API for creating task management (to-do list).
+A simple API for task management (to-do list).
 
 ## Local development
 
 ```
 docker-compose up
 ```
+
+## Project architecture
+
+	.
+	├── config                  # Structs for initializing global configuration
+	├── http                    # Layer that exposes application to HTTP protocol
+	├── k8s                     # Deployment source files
+	├── migrations              # SQL files for Postgres migrations
+	├── models                  # Communicates with persistence layer using repository pattern
+	├── password                # Crypto utilities
+	├── services                # Thin layer that composes application use cases
+	├── storage                 # Interface for persist objects in different cloud providers
+	├── main.go                 # Constructs container for starting project with its HTTP server
 
 ## Unauthenticated endpoints
 
