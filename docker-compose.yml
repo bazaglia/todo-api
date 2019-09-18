@@ -1,0 +1,38 @@
+version: '3.0'
+services:
+  backend:
+    image: golang:1.13
+    volumes:
+      - .:/go/src/todo-list
+    working_dir: /go/src/todo-list
+    command: ["./wait-for-it.sh", "postgres:5432", "--", "go", "run", "main.go"]
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=
+      - DB_NAME=postgres
+      - DB_SSL_MODE=disable
+    ports:
+     - "8000:8000"
+  postgres:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"
+    volumes:
+      - todo_list_db:/var/lib/postgresql/data
+  migrate:
+    image: migrate/migrate
+    volumes:
+        - ./migrations:/migrations
+        - ./wait-for-it.sh:/wait-for-it.sh
+    entrypoint: []
+    command: sh -c "sleep 5 && /migrate --path /migrations -database postgres://postgres@postgres:5432/postgres?sslmode=disable up"
+    depends_on:
+      - postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+volumes:
+  todo_list_db:
